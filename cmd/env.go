@@ -79,7 +79,7 @@ uniquely identifies the cluster.
           swagger.json
         spec.json
 		default.jsonnet
-        params.libsonnet		
+        params.libsonnet
       us-west/
         staging/         [Example of user-generated env]
           .metadata/
@@ -117,13 +117,8 @@ var envAddCmd = &cobra.Command{
 		if len(server) == 0 {
 			// If server is not provided, use the provided context.
 			// If context is also not provided, use the current context.
-			var ctx *string
-			if len(context) != 0 {
-				ctx = &context
-			}
-
 			var ns string
-			server, ns, err = resolveContext(ctx)
+			_, server, ns, err = resolveContext(context)
 			if err != nil {
 				return err
 			}
@@ -307,7 +302,7 @@ var envSetCmd = &cobra.Command{
 		}
 
 		if len(context) != 0 {
-			server, _, err = resolveContext(&context)
+			_, server, _, err = resolveContext(context)
 			if err != nil {
 				return err
 			}
@@ -332,7 +327,7 @@ ks env set us-west/staging --namespace=staging
 # Updates both the name and the server of the environment 'us-west/staging'.
 # Updating the name will update the directory structure in 'environments'.
 ks env set us-west/staging --server=http://example.com --name=us-east/staging
-  
+
 # Updates API server address of the environment 'us-west/staging' based on the
 # server in the context 'staging-west' in your kubeconfig file.
 ks env set us-west/staging --context=staging-west`,

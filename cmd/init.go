@@ -61,16 +61,12 @@ var initCmd = &cobra.Command{
 		}
 
 		// Find the URI and namespace of the current cluster, if it exists.
-		var ctx *string
-		if len(context) != 0 {
-			ctx = &context
-		}
-		uri, namespace, err := resolveContext(ctx)
+		resolvedCtx, uri, namespace, err := resolveContext(context)
 		if err != nil {
 			return err
 		}
 
-		c, err := kubecfg.NewInitCmd(appName, appRoot, specFlag, &uri, &namespace)
+		c, err := kubecfg.NewInitCmd(appName, appRoot, specFlag, &resolvedCtx, &uri, &namespace)
 		if err != nil {
 			return err
 		}

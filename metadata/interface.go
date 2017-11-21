@@ -91,7 +91,7 @@ func Find(path AbsPath) (Manager, error) {
 // Init will retrieve a cluster API specification, generate a
 // capabilities-compliant version of ksonnet-lib, and then generate the
 // directory tree for an application.
-func Init(name string, rootPath AbsPath, spec ClusterSpec, serverURI, namespace *string) (Manager, error) {
+func Init(name string, rootPath AbsPath, spec ClusterSpec, context, serverURI, namespace *string) (Manager, error) {
 	// Generate `incubator` registry. We do this before before creating
 	// directory tree, in case the network call fails.
 	const (
@@ -108,7 +108,7 @@ func Init(name string, rootPath AbsPath, spec ClusterSpec, serverURI, namespace 
 		return nil, err
 	}
 
-	return initManager(name, rootPath, spec, serverURI, namespace, gh, appFS)
+	return initManager(name, rootPath, spec, context, serverURI, namespace, gh, appFS)
 }
 
 // ClusterSpec represents the API supported by some cluster. There are several

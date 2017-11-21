@@ -29,7 +29,7 @@ uniquely identifies the cluster.
           swagger.json
         spec.json
 		default.jsonnet
-        params.libsonnet		
+        params.libsonnet
       us-west/
         staging/         [Example of user-generated env]
           .metadata/
