@@ -56,7 +56,7 @@ var diffCmd = &cobra.Command{
 		}
 		wd := metadata.AbsPath(cwd)
 
-		files, err := flags.GetStringArray(flagFile)
+		componentNames, err := flags.GetStringArray(flagComponent)
 		if err != nil {
 			return err
 		}
@@ -76,7 +76,7 @@ var diffCmd = &cobra.Command{
 			return err
 		}
 
-		c, err := initDiffCmd(cmd, wd, env1, env2, files, diffStrategy)
+		c, err := initDiffCmd(cmd, wd, env1, env2, componentNames, diffStrategy)
 		if err != nil {
 			return err
 		}
@@ -174,13 +174,12 @@ func initDiffSingleEnv(env, diffStrategy string, files []string, cmd *cobra.Comm
 		return nil, fmt.Errorf("single <env> argument with prefix 'local:' or 'remote:' not allowed")
 	}
 
-	envSpec := &envSpec{env: &env, files: files}
-	c.Client.APIObjects, err = expandEnvCmdObjs(cmd, envSpec, wd)
+	c.Client.APIObjects, err = expandEnvCmdObjs(cmd, env, files, wd)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Client.ClientPool, c.Client.Discovery, err = restClientPool(cmd, envSpec.env)
+	c.Client.ClientPool, c.Client.Discovery, err = restClientPool(cmd, &env)
 	if err != nil {
 		return nil, err
 	}
@@ -296,12 +295,15 @@ func expandEnvObjs(cmd *cobra.Command, env string, manager metadata.Manager) ([]
 	}
 
 	libPath, vendorPath, envLibPath, envComponentPath, envParamsPath := manager.LibPaths(env)
-
 	componentPaths, err := manager.ComponentPaths()
 	if err != nil {
 		return nil, err
 	}
-	baseObj := constructBaseObj(componentPaths)
+
+	baseObj, err := constructBaseObj(componentPaths, nil)
+	if err != nil {
+		return nil, err
+	}
 	params := importParams(string(envParamsPath))
 
 	expander.FlagJpath = append([]string{string(libPath), string(vendorPath), string(envLibPath)}, expander.FlagJpath...)
